@@ -1,19 +1,11 @@
 # My Public Facing Portfolio: 
 Welcome to my portfolio.  I hope you enjoy your stay.
 
-## A5 Notes
-
-Your final submission should include the Practical Application 1 Jupyter Notebook and other relevant files (including data).
-The fianl should be uploaded to a myPFP as my first portfolio project. 
-
-
-To explore the data, with pandas and python to create statistical summaries demonstrating differences in those who accepted and rejected the coupon. 
-
-Utilize the Matplotlib and Seaborn libraries to create a visualization using Python. 
-
-Ensure that your findings are clearly stated in a separate section alongside actionable items and recommendations.
-
-Your repository should also include a READMe file containing a brief nontechnical report that highlights the differences between customers who did and did not accept the coupons.
+## A5 Summary
+Based on my analysis of the coupons dataset, I offer the following conclusions:
+Drivers who go to bars more than once a month and are either not widowed with adult passengers or under 30 years old showed significantly higher acceptance rates (near or above 70%) for bar-related coupons. 
+In contrast, those who frequently dine at inexpensive restaurants and earn less than $50K accepted at a notably lower rate (below 50%). 
+This suggests that lifestyle context (social behavior and age) may be more predictive of coupon acceptance than financial or dining habits alone.
 
 
 ## A5 Rubric
