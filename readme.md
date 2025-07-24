@@ -1,5 +1,9 @@
-# DATASCI 200: Introduction to Data Science Programming
+# My Public Facing Portfolio: 
+Welcome to my portfolio.  I hope you enjoy your stay.
 
-Welcome to DATASCI 200! To use this starter repo simply set up your [git client](https://docs.github.com/en/authentication/connecting-to-github-with-ssh) and clone the repo with the SSH link.
+
+Index
+M5
+
 
 
