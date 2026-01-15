@@ -1,7 +1,5 @@
 # Capstone Project — Final Report
 ## Image Quality as a Hyperparameter  
-**Author:** Rick O.
-
 ---
 
 ## 1. Problem Statement
