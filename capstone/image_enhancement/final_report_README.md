@@ -91,21 +91,23 @@ Metrics are logged and aggregated across runs to support interaction analysis an
 
 ---
 
-### Figure 5 — “Pretty but Worse” Example
-![Pretty but Worse Example](results/final_figures/fig08_pretty_but_worse.png)
-
-*A visually clearer enhancement produces a substantial recall drop, illustrating that aesthetic improvement does not guarantee model-aligned improvement.*
-
----
-
 ## 8. Findings
-- Image quality acts as a **measurable control variable**, influencing detection outcomes even under identical training conditions.
-- **Interaction effects dominate**: brightness conditions sharpening; contrast operates within bounded regions.
-- Visually appealing enhancements can **harm recall**, underscoring the need for model-aware image engineering.
-- Performance variation reflects image-driven effects, not instability in training or inference.
+-Image enhancement parameters function as data-level hyperparameters, measurably influencing detection performance under an otherwise fixed training regime.  
+-Interaction effects dominate model response. Brightness consistently conditions the impact of sharpening, while sharpening strength and scale exhibit coupled behavior that cannot be inferred from single-parameter analysis.  
+-Contrast adjustments affect performance within bounded regions; aggressive percentile clipping degrades recall, indicating that enhancement geometry matters more than magnitude.  
+-Across approximately 50 enhancement schedules, recall varied systematically while model behavior remained coherent, indicating that observed performance differences are attributable to changes in input imagery rather than instability in training or inference.  
+-These results demonstrate that improvements in visual clarity do not necessarily translate to improved detection, underscoring the importance of model-aware image engineering.  
 
 ---
 
 ## 9. Next Steps
-- Identify recall-safe enhancement bands for operational use.
-- Exte
+## Next Steps
+
+- **Interaction-safe enhancement bands:** Formalize “safe operating regions” for combined enhancements (e.g., brightness × sharpening), identifying parameter ranges that consistently preserve or improve recall and ranges that reliably degrade performance.
+
+- **Automated schedule generation (feedback-driven search):** Use accumulated experiment results (e.g., recall response surfaces) to adaptively propose new CVE configurations—prioritizing promising regions and avoiding harmful interactions—transforming parameter sweeps into an iterative, data-informed search process.
+
+- **Constraint-based enhancement rules:** Encode learned “do-not-combine” or “combine-with-care” rules (for example, sharpening–brightness regimes that introduce artifacts) as guardrails for future image enhancement pipelines.
+
+- **Multi-objective optimization:** Extend the analysis to optimize recall subject to explicit constraints on false positives or spatial error, enabling selection of enhancement configurations along a practical Pareto frontier.
+
