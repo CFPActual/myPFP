@@ -1,56 +1,63 @@
 # Capstone Project — Final Report
-## Image Quality as a Hyperparameter  
+## Image Quality as a Hyperparameter
+
 ---
 
 ## 1. Problem Statement
-Modern computer vision pipelines often assume model architecture is the primary performance lever. In practice, **input image quality** can be the binding constraint. This project evaluates whether **controlled image enhancement**—applied to training and inference imagery—can measurably change downstream performance **without retraining the model**.
+Modern computer vision pipelines often assume model architecture is the primary performance lever. In practice, **input image quality** can be the binding constraint. This project evaluates whether controlled image enhancement—applied consistently to both training and inference imagery—can measurably change downstream detection performance under a **fixed training regime**.
+
+By holding the model architecture, training procedure, and epoch count constant across runs, the analysis isolates how systematic changes to image characteristics influence model behavior.
 
 ---
 
 ## 2. Model Outcomes / Predictions
 - **Task:** Supervised object detection (tree-point prediction)
-- **Model:** Pretrained Green City TPP (VGG-style SFANet)
-- **Output:** Predicted tree locations with associated detection metrics
-- **Primary metric:** **Recall** (per original model author and prior work)
+- **Model:** Green City Tree Point Prediction (TPP)
+- **Architecture:** VGG-style SFANet (unchanged across experiments)
+- **Training regime:** Fixed 15-epoch schedule per run
+- **Primary metric:** Recall
 - **Secondary metrics:** Precision, F1, false positives, spatial distance
 
-The model is intentionally **frozen** and treated as a **measurement instrument**. All observed changes are attributed to input-space manipulation.
+The model is retrained consistently for each experiment using the same procedure and hyperparameters. Observed performance differences are attributed to changes in **input imagery**, not training variability.
 
 ---
 
 ## 3. Data Acquisition
 - **Ground truth:** Street ROW Trees — City of Pasadena, CA  
 - **Imagery:** NAIP aerial imagery (chip-based ingestion)
-- **Experimental logs:** ~50 completed CVE runs with timestamped metrics
+- **Experiment scope:** ~50 completed CVE runs with full training, inference, and evaluation
 
 ---
 
 ## 4. Data Preprocessing / Preparation
-Image chips are enhanced using parameterized computer-vision operations:
+Image chips are modified using parameterized computer-vision enhancements:
 - **Sharpening:** strength (`alpha`) and scale (`sigma`)
-- **Contrast stretching:** lower/upper percentiles (`low_perc`, `high_perc`)
+- **Contrast stretching:** percentile bounds (`low_perc`, `high_perc`)
 - **Brightness:** gamma correction (`gamma`)
 
-Enhancements overwrite working directories temporarily; inference and evaluation are run; metrics are logged. Canonical metrics are joined to CVE parameters via validated temporal alignment.
+For each configuration, enhanced imagery replaces the working input set, followed by dataset preparation, training, inference, and evaluation using an identical pipeline.
 
 ---
 
 ## 5. Modeling
-No new model training occurs in this phase. Instead:
-- The frozen TPP model is run repeatedly under different **CVE schedules**
-- Parameter sweeps function as **data-level hyperparameters**
-- This isolates image quality effects from training variance
+All experiments use the same model architecture and training workflow:
+- Dataset preparation
+- Training for a fixed 15 epochs
+- Inference on enhanced imagery
+- Standardized evaluation
+
+Enhancement parameters function as **data-level hyperparameters**, allowing performance differences to be attributed to image characteristics rather than model design.
 
 ---
 
 ## 6. Model Evaluation
-Evaluation is performed consistently across runs using:
+Each run is evaluated using:
 - Recall (primary)
-- Precision, F1
-- False positives / negatives
+- Precision and F1
+- False positives / false negatives
 - Mean distance to closest predicted tree
 
-The analysis emphasizes **image-driven response surfaces** and **parameter interactions**, not model tuning.
+Metrics are logged and aggregated across runs to support interaction analysis and comparative visualization.
 
 ---
 
@@ -59,60 +66,46 @@ The analysis emphasizes **image-driven response surfaces** and **parameter inter
 ### Figure 1 — Recall vs Image Parameters
 ![Recall vs Image Parameters](results/final_figures/fig01_recall_vs_params.png)
 
-*Recall varies nonlinearly across individual enhancement parameters. No single parameter dominates in isolation, motivating interaction analysis.*
+*Recall varies nonlinearly across individual enhancement parameters, motivating interaction-based analysis.*
 
 ---
 
 ### Figure 2 — Interaction Heatmaps (Median Recall)
 ![Interaction Heatmaps](results/final_figures/fig06_interaction_heatmaps_grid.png)
 
-*Median recall surfaces reveal strong **interaction effects** among enhancement parameters. Brightness conditions sharpening behavior (gamma × alpha / sigma), while contrast window geometry (low × high percentiles) exhibits bounded regimes. These interactions demonstrate that visually similar enhancements can produce materially different model responses.*
+*Median recall surfaces show strong interaction effects among enhancement parameters. Brightness conditions sharpening behavior, while contrast window geometry exhibits bounded performance regimes.*
 
 ---
 
 ### Figure 3 — Interaction Scatter Support
 ![Interaction Scatter Support](results/final_figures/fig07_interaction_scatter_support_grid.png)
 
-*Raw run-level scatter confirms the heatmap structure and shows that interaction surfaces are supported by the underlying data rather than binning artifacts.*
+*Run-level scatter confirms that interaction surfaces are supported by the underlying data rather than binning artifacts.*
 
 ---
 
-### Figure 4 — Precision–Recall Across ~50 CVE Runs (Model Frozen)
+### Figure 4 — Precision–Recall Across CVE Runs
 ![Precision–Recall Across Runs](results/final_figures/fig04_precision_vs_recall.png)
 
-*Across the full experiment set, the frozen model responds coherently as image inputs change. Recall spans a meaningful range while precision degrades gradually, indicating that performance shifts are driven by input manipulation rather than unstable inference.*
+*Across all enhancement schedules, the model exhibits coherent behavior. Recall shifts systematically under different image conditions while precision degrades gradually, indicating stable training and inference.*
 
 ---
 
-### Figure 5 — “Pretty but Worse” Example (Qualitative)
+### Figure 5 — “Pretty but Worse” Example
 ![Pretty but Worse Example](results/final_figures/fig08_pretty_but_worse.png)
 
-*A representative before/after enhancement pair shows improved visual clarity accompanied by a substantial recall drop. This illustrates a key finding: **aesthetic improvement does not guarantee model-aligned improvement**.*
+*A visually clearer enhancement produces a substantial recall drop, illustrating that aesthetic improvement does not guarantee model-aligned improvement.*
 
 ---
 
 ## 8. Findings
-- Image quality behaves like a **hyperparameter**, measurably shifting model behavior even when the model is frozen.
-- **Interaction effects** dominate: brightness often conditions the impact of sharpening; contrast operates within bounded safe ranges.
-- Visually “better” images can **harm recall**, reinforcing the need for model-aware image engineering.
-- Recall gains do not arise from pathological behavior; tradeoffs remain coherent across runs.
+- Image quality acts as a **measurable control variable**, influencing detection outcomes even under identical training conditions.
+- **Interaction effects dominate**: brightness conditions sharpening; contrast operates within bounded regions.
+- Visually appealing enhancements can **harm recall**, underscoring the need for model-aware image engineering.
+- Performance variation reflects image-driven effects, not instability in training or inference.
 
 ---
 
 ## 9. Next Steps
-- Formalize **recall-safe enhancement bands** for production use.
-- Extend interaction analysis to task-specific objectives (e.g., localization error thresholds).
-- Apply the same measurement framework to other CV tasks and datasets.
-
----
-
-## 10. Repository Contents
-- `results/final_figures/` — publication-ready figures used in this report
-- Jupyter notebooks — analysis and figure generation
-- Scripts — CVE application and metric aggregation
-
----
-
-## Contact
-Rick O.  
-UC Berkeley Engineering — MIDS Capstone
+- Identify recall-safe enhancement bands for operational use.
+- Exte
